@@ -1,67 +1,75 @@
 #!/usr/bin/env sage -python
 
-from sage.all import *
-from functions import *
-import time
 import os
+# import time
+from sage.all import *
+from functions import unicyclic_graphs, sigma, diameter, save_graph, write_energy
+from functions import laplacian_energy as le
 
-time_start = time.time()
+# time_start = time.time()
 
-# Generating graphs using Nauty
-n, m = 10, 10
-parameters = str(n) + " -c " + str(m) + ":" + str(m)
-nauty_list = list(graphs.nauty_geng(parameters))
-# Graphs will be evaluated in groups of 240 per cycle
-print(f"Graphs generated: {len(nauty_list)}\nCycles: {len(nauty_list) // 240 + 1}")
+# Set parameters
+n, m = 10, 10  # Vertices and edges
+interval = 250  # Set size
+folder = "plots"
 
-# Adding indexes and graphs to a list then to a tuple
-nauty_list_indexed = list()
-for index, graph in enumerate(nauty_list):
-    nauty_list_indexed.append((index, graph))
-nauty_tuple = tuple(nauty_list_indexed)
+# Generate graphs
+graphs = unicyclic_graphs(n, m)
+graphs_list = list()
 
-# Calculating the Laplacian energy and setting an index for the first graph
-energy = laplacian_energy(nauty_list[0].spectrum(laplacian=True), n, m)
-index = 0
+for index, graph in enumerate(graphs):
+    # Add index to graph
+    graphs_list.append((index, graph))
 
+# Make enumerate object into tuple
+graphs_tuple = tuple(graphs_index)
+
+# Create folder to store graph plots
+path = os.path.join(folder)
+if not os.path.exists(path):
+    os.mkdir(path)
+
+# Write first row of energies table
+write_energy("i", "n", "LE")
 spectrum = list()
 graph_tuple = tuple()
 
-# Setting parameters for iteration
-cycle = 0
-start = 0
-finish = 240
+# Compute Laplacian energy for the 1st graph
+energy = le(graphs[0].spectrum(laplacian=True), n, m)
+# Set index for the 1st graph
+index = 0
 
-while finish - 240 <= len(nauty_tuple) + 1:
-    for new_graph_tuple in nauty_tuple[start:finish]:
-        new_spectrum = new_graph_tuple[1].spectrum(laplacian=True)
-        new_energy = laplacian_energy(new_spectrum, n, m)
-        new_index = new_graph_tuple[0]
+# Initialize variables
+lap = 0
+start = 0
+end = interval
+
+# Find and save graph with minimum Laplacian energy
+while end-interval <= len(graphs_tuple)+1:
+    for graph in graphs_tuple[start:end]:
+        new_spectrum = graph[1].spectrum(laplacian=True)
+        new_energy = le(new_spectrum, n, m)
+        new_index = graph[0]
         if new_energy < energy:
             spectrum = new_spectrum
             energy = new_energy
-            graph_tuple = new_graph_tuple[1]
+            graph_tuple = graph[1]
             index = new_index
-            # Saving the partial result's graph plot as a PNG file
-            nauty_list[index].plot().save(str("graph_partial_" + str(n) + ".png"))
-            # Saving the energy value as a text file
-            with open("energy.txt", "w") as graph_energy:
-                graph_energy.write(str(round(energy, 5)))
-    start += 240
-    finish += 240
-    cycle += 1
-    print(f"Cycle: {cycle} - Partial min. L. energy: {round(energy, 5)} - Graph: {index}")
 
-time_finish = time.time()
+            # Save graph information
+            save_graph(graphs[index], n, index) 
+            write_energy(index, n, energy)
+    start += interval
+    end += interval
+    lap += 1
 
-# Saving the graph plot as a PNG file
-filename = "graph_" + str(n) + ".png"
-nauty_list[index].plot().save(filename)
-# Removing the partial result's PNG file
-if os.path.exists(str("graph_" + str(n) + ".png")):
-    os.remove(str("graph_partial_" + str(n) + ".png"))
+# time_end = time.time()
+sigma = sigma(graph_tuple, spectrum)
+diameter = diameter(graph_tuple)
+# time = time_end-time_start
+# print(time)
 
-print(f"Minimum Laplacian energy: {round(energy, 5)}")
-print(f"Sigma: {sigma(graph_tuple, spectrum)}")
-print(f"Diameter: {diameter(graph_tuple)}")
-print(f"Execution time: {round(time_finish - time_start, 2)} s")
+# TO DO
+with open("energies.txt", "a") as file:
+    file.writelines(["\nSigma: {sigma}", "\nDiameter: {diameter}"])
+    file.close()
