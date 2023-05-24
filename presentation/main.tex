@@ -1,0 +1,166 @@
+\documentclass{beamer}
+
+\usepackage[portuguese]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{minted}
+\usepackage{pgfplots}
+\usepackage{nicematrix}
+
+\pgfplotsset{width=8cm,compat=1.17}
+
+\title{\huge Grafos unicíclicos com energia laplaciana mínima}
+\author{\Large Lisandra Simões Pires \and \text{\normalsize Orientadora: Prof. Dra. Virgínia Maria Rodrigues}}
+\institute{\includegraphics[height=1cm]{Imagens/ime-logotipo.png}}
+\date{\tiny Setembro 2021}
+\logo{\includegraphics[height=1cm]{Imagens/salao-2021-preto-vermelho.png}}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}{Grafo unicíclico}
+    \begin{figure}[h]
+        \input{grafo-t7}
+        \caption{O grafo $T_{4,3}$.}
+    \end{figure}
+    
+    \begin{itemize}
+        \item Um grafo é uma estrutura $G=G(V, E)$, constituída por um conjunto $V$, cujos elementos são denominados vértices, e um conjunto $E$ de subconjuntos formados por pares não ordenados de $V$.
+        \item Um \alert{grafo unicíclico} é um \alert{grafo conexo} contendo exatamente um ciclo.
+        \item O grau de um vértice $v$, denotado por $d(v)$, é o número de vértices adjacentes a $v$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Matriz laplaciana}
+    A \alert{matriz laplaciana} é a matriz $L_{nxn}$ com entradas
+    \[L_{i,j}:=
+    \begin{cases}
+        \text{$d(v_i)$} &\quad\text{se $i=j$} \\
+        \text{$-1$} &\quad\text{se $i \neq j$ e $v_i$ é adjacente a $v_j$} \\
+        \text{$0$} &\quad\text{caso contrário} \\
+    \end{cases}\]
+    
+    \begin{columns}
+    \column{0.5\textwidth}
+    \begin{figure}[h]
+        \resizebox{5cm}{!}{\input{grafo-t7}}
+    \end{figure}
+    
+    \column{0.5\textwidth}
+    \begin{figure}[h]
+        \resizebox{5cm}{!}{\input{matriz-laplaciana}}
+    \end{figure}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Energia laplaciana}
+    A \alert{energia laplaciana} \cite{gutman} de um grafo $G$ de ordem $n$ com $m$ arestas é definida como \[LE(G)=\sum_{i=1}^{n}|\mu_{i}-\bar{d}|\] onde $\mu_{1} \geq \mu_{2} \geq ... \geq \mu_{n}$ são os \textcolor{blue}{autovalores laplacianos} de $G$ e $\bar{d}=\frac{2m}{n}$ é a média dos graus.
+    
+    \begin{equation*}
+        \begin{split}
+            LE(T_{4,3}) & =|\textcolor{blue}{0}-2|+|\textcolor{blue}{0,27652}-2|+|\textcolor{blue}{2}-2|+|\textcolor{blue}{1,33230}-2| \\ & +|\textcolor{blue}{2,52195}-2|+|\textcolor{blue}{3,29200}-2|+|\textcolor{blue}{4,57723}-2| \\ & =8,78236
+        \end{split}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{Grafos extremais com respeito à energia laplaciana}
+    \begin{table}[h]
+        \resizebox{10cm}{!}{\input{tabela-extremais}}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Problema}
+Dentre todos os grafos unicíclicos com $n$ vértices, qual é o de menor energia laplaciana?
+\end{frame}
+
+\begin{frame}{Ferramentas}
+\begin{description}
+    \item[Python] Linguagem de programação
+    \item[SageMath] Software de matemática de código aberto 
+    \item[Nauty] Programas para calcular grupos de automorfismos de grafos e digrafos
+\end{description}
+\end{frame}
+
+\begin{frame}[fragile]{Código}
+    \input{code-minted}
+    \textcolor{red}{Códigos disponíveis em \url{https://github.com/lisandrasp}}
+\end{frame}
+
+\begin{frame}{Crescimento exponencial}
+    \begin{table}[h]
+        \input{tabela-crescimento}
+        \caption{Número de grafos e tempo de processamento.}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Resultados}
+    \begin{table}[h]
+        \input{tabela-resultados}
+        \caption{Resultados para grafos unicíclicos onde $4 \leq n \leq 17$.}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Resultados}
+    \begin{table}[h]
+        \input{tabela-ciclos}
+        \caption{Casos especiais onde o grafo com menor energia não é um \emph{tadpole}.}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Resultados parciais}
+    \begin{table}[h]
+        \input{tabela-parciais}
+        \caption{Comparação entre os resultados parciais e os grafos \emph{tadpole}.}
+    \end{table}    
+\end{frame}
+
+\begin{frame}{Conjectura}
+    Dentre todos os unicíclicos com $n$ vértices, o de menor energia laplaciana é o \emph{tadpole} $T_{4,n-4}$, exceto quando $n=8$ e $n=12$.
+\end{frame}
+
+\begin{frame}{Parâmetros}
+    \begin{itemize}
+        \item O \alert{$\sigma$} é o número de autovalores laplacianos de $G$ maiores ou iguais ao grau médio $\bar{d}$. \cite{pinheiro}
+        \item O \alert{diâmetro} é a maior distância entre qualquer par de vértices.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Parâmetros}
+    \begin{table}[h]
+        \input{tabela-sigma}
+        \caption{$\sigma$ e diâmetro para os grafos unicíclicos.}
+    \end{table}    
+\end{frame}
+
+\begin{frame}{Parâmetros}
+    \begin{alertblock}{$\sigma$}
+        \[\sigma =
+        \begin{cases}
+            \text{$\frac{n}{2}+1$} &\quad\text{se $n$ é par}\\
+            \text{$\frac{n+1}{2}+1$} &\quad\text{se $n$ é ímpar}\\
+        \end{cases}\]
+    \end{alertblock}
+    
+    \begin{alertblock}{Diâmetro}
+        \[diam =
+        \begin{cases}
+            \text{$n-2$} &\quad\text{se $n \ne 8$ ou $n \ne  12$}\\
+            \text{$\frac{n}{2}$} &\quad\text{se $n=8$ ou $n=12$}\\
+        \end{cases}\]
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}
+    \begin{thebibliography}{5}
+        \setbeamertemplate{bibliography item}[text]
+        \bibitem{gutman}
+        GUTMAN, I.; ZHOU, B. Laplacian energy of a graph. Linear Algebra and its Applications, v. 414, n. 1, p. 29-37, abr. 2006.
+        \bibitem{pinheiro}
+        PINHEIRO, L. K. Energia laplaciana sem sinal de grafos. 2018. 104 p. Tese (doutorado) - Universidade Federal do Rio Grande do Sul, Porto Alegre, 2018
+    \end{thebibliography}
+\end{frame}
+
+\end{document}

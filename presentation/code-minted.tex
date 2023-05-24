@@ -1,0 +1,30 @@
+\begin{minted}[
+frame=lines,
+framesep=2mm,
+bgcolor=lightgray,
+fontsize=\tiny
+]
+{python}
+
+    while f - 240 <= len(tuple_nauty) + 1:
+        for new_graph_tuple in tuple_nauty[s:f]:
+            new_spectrum = new_graph_tuple[1].spectrum(laplacian=True)
+            new_energy = laplacian_energy(new_spectrum, n, m)
+            new_index = new_graph_tuple[0]
+
+            if new_energy < energy:
+                spectrum = new_spectrum
+                energy = new_energy
+                graph_tuple = new_graph_tuple
+                index = new_index
+                graphs_nauty[index].plot().save(str('graph_partial_' + str(n) + '.png'))
+        s += 240
+        f += 240
+        cycle += 1
+        print(f'Cycle {cycle} Partial minimum Laplacian energy {round(energy, 5)}')
+
+    degree = graph_tuple[1].average_degree()
+    sigma = len([mu for mu in spectrum if mu >= degree])
+    diameter = graph_tuple[1].diameter()
+    graphs_nauty[index].plot().save(str('graph_' + str(n) + '.png'))
+\end{minted}
