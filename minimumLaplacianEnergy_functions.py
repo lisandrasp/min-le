@@ -9,9 +9,9 @@ from functions import laplacian_energy as le
 # time_start = time.time()
 
 # Set parameters
-n, m = 10, 10  # Vertices and edges
-interval = 250  # Set size
-folder = "plots"
+n, m = 10, 10     # Vertices and edges
+interval = 250    # Lap size
+folder = "plots"  # Folder name
 
 # Generate graphs
 graphs = unicyclic_graphs(n, m)
@@ -31,11 +31,10 @@ if not os.path.exists(path):
 
 # Write first row of energies table
 write_energy("i", "n", "LE")
-spectrum = list()
-graph_tuple = tuple()
 
 # Compute Laplacian energy for the 1st graph
 energy = le(graphs[0].spectrum(laplacian=True), n, m)
+
 # Set index for the 1st graph
 index = 0
 
@@ -43,6 +42,8 @@ index = 0
 lap = 0
 start = 0
 end = interval
+spectrum = list()
+graph_tuple = tuple()
 
 # Find and save graph with minimum Laplacian energy
 while end-interval <= len(graphs_tuple)+1:
@@ -63,13 +64,12 @@ while end-interval <= len(graphs_tuple)+1:
     end += interval
     lap += 1
 
-# time_end = time.time()
 sigma = sigma(graph_tuple, spectrum)
 diameter = diameter(graph_tuple)
+# time_end = time.time()
 # time = time_end-time_start
-# print(time)
 
-# TO DO
 with open("energies.txt", "a") as file:
-    file.writelines(["\nSigma: {sigma}", "\nDiameter: {diameter}"])
+    file.writelines([f"Sigma: {sigma}\n", f"Diameter: {diameter}\n"])
+    # file.write(f"Time: {time}")
     file.close()
