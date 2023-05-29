@@ -52,6 +52,6 @@ while end-interval <= len(graphs_tuple)+1:
     print(f"LE min: {round(energy, 5)}")
 
 time_end = time.time()
-time = time_end - time_start
+time = time_end-time_start
 
 print(f"Time: {time}")

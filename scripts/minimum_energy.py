@@ -1,24 +1,30 @@
 #!/usr/bin/env sage -python
 
-from sage.all import *
-from functions import laplacian_energy
 import time
+from sage.all import *
+from functions import unicyclic_graphs
+from functions import laplacian_energy as le
 
 start = time.time()
 
-# Generating graphs using Nauty
-n, m = 10, 10
-parameters = str(n) + " -c " + str(m) + ":" + str(m)
-graphs_nauty = list(graphs.nauty_geng(parameters))
+# Set parameters
+n, m = 10, 10  # Vertices and edges
 
-energy = [laplacian_energy(graph.spectrum(laplacian=True), n, m) for graph in graphs_nauty]
-index = energy.index(min(energy))
+# Generate graphs
+graphs = unicyclic_graphs(n, m) 
 
-finish = time.time()
+# Compute Laplacian energy
+energy = [le(graph.spectrum(laplacian=True), n, m) for graph in graphs]
 
-# Saving the graph plot as a PNG file
-filename = "graph_" + str(n) + ".png"
-graphs_nauty[index].plot().save(filename)
+# Find minimum le
+minimum = min(energy)
 
-print(f"Minimum Laplacian energy: {round(min(energy), 5)}")
-print(f"Execution time: {round(finish - start, 2)} s")
+# Find index of minimum le 
+index = energy.index(minimum)
+end = time.time()
+time = end-start
+
+# Save graph plot as PNG file
+file = f"graph-{n}.png"
+graphs[index].plot().save(file)
+print(f"LE min: {round((minimum), 5)}\nTime: {time}")

@@ -1,6 +1,6 @@
 def unicyclic_graphs(n, m):
     '''Generate and return a list of non-isomorphic unicyclic graphs.'''
-    parameters = str(n)+" -c "+str(m)+":"+str(m)
+    parameters = f"{n} -c {m}:{m}"
     graphs = list(graphs.nauty_geng(parameters))
     return graphs
 

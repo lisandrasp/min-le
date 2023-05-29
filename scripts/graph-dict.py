@@ -1,6 +1,5 @@
 #!/usr/bin/env sage -python
 
-import time
 from sage.all import *
 from functions import unicyclic_graphs
 from functions import laplacian_energy as le

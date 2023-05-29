@@ -1,37 +1,44 @@
 #!/usr/bin/env sage -python
 
-from sage.all import *
-from functions import laplacian_energy
 import time
+from sage.all import *
+from functions import unicyclic_graphs
+from functions import laplacian_energy as le
 
 start = time.time()
 
-# Generating graphs using Nauty
-n, m = 10, 10
-parameters = str(n) + " -c " + str(m) + ":" + str(m)
-nauty_list = list(graphs.nauty_geng(parameters))
+# Set parameters
+n, m = 10, 10  # Vertices and edges
+lenght = 240
 
-# Separating graphs in lists
-size = 240
-graph_lists = [nauty_list[i:i + n] for i in range(0, len(nauty_list), size)]
+# Generate graphs
+graphs = unicyclic_graphs(n, m)
 
-spectrum_all = list()
+# Split graphs in lists of defined lenght
+graph_lists = [graphs[graph:graph+lenght] for graph in range(0, len(graphs), lenght)]
+
+spectra = list()
 for graph_list in graph_lists:
-    spectrum_list = [list_1.spectrum(laplacian=True) for list_1 in graph_list]
-    spectrum_all.append(spectrum_list)
+    # Compute spectrum of each graph in a list
+    spectra_list = [graph.spectrum(laplacian=True) for graph in graph_list]
+    # Store spectra lists in a list
+    spectra.append(spectra_list)
 
-spectrum_join = list()
-for list_2 in spectrum_all:
-    spectrum_join += list_2
+# Join all spectra in a single list
+spectra_all = list()
+for spectrum in spectra_all:
+    spectra_all += spectrum
 
-energy = [laplacian_energy(list_3, n, m) for list_3 in spectrum_join]
-index = energy.index(min(energy))
+# Compute Laplacian energy
+energy = [le(spectrum, n, m) for spectrum in spectra_all]
 
-finish = time.time()
+# Find minimum Laplacian energy
+minimum = min(energy)
+index = energy.index(minimum)
 
-# Saving the graph plot as a PNG file
-filename = "graph_" + str(n) + ".png"
-nauty_list[index].plot().save(filename)
+end = time.time()
 
-print(f"Minimum Laplacian energy: {round(min(energy), 5)}")
-print(f"Execution time: {round(finish - start, 2)} s")
+# Save graph plot as PNG file
+file = f"graph-{n}.png"
+graphs[index].plot().save(file)
+print(f"LE min:{round((minimum), 5)\nTime: {time}")
